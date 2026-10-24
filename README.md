@@ -6,6 +6,9 @@
 
 不替你「算最便宜」，而是帮你在真实饭点压力下，**快速做出可执行、可解释、可分享的最终决定**。
 
+🌐 **在线 Demo（无需 Token，打开即用）**  
+👉 [https://ali-yu.github.io/mcd-meal-decision-officer/](https://ali-yu.github.io/mcd-meal-decision-officer/)
+
 ---
 
 ## 一、核心创新点
