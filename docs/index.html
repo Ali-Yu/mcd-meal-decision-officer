@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>麦麦饭点决策官 · Demo</title>
+  <style>
+    :root {
+      --mcd-red: #DA291C;
+      --mcd-yellow: #FFC72C;
+      --mcd-dark: #292929;
+      --mcd-light: #FFF8E7;
+      --card-bg: #ffffff;
+      --text: #333;
+      --muted: #666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #fff8e7 0%, #ffe8c8 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: var(--mcd-red);
+      color: white;
+      padding: 28px 20px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,199,44,0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .logo {
+      font-size: 15px;
+      letter-spacing: 2px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.95;
+      max-width: 520px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .highlight {
+      color: var(--mcd-yellow);
+      font-weight: 700;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: -24px auto 40px;
+      padding: 0 16px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      background: white;
+      border: 2px solid #eee;
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .tab:hover {
+      border-color: var(--mcd-yellow);
+      transform: translateY(-1px);
+    }
+
+    .tab.active {
+      background: var(--mcd-red);
+      color: white;
+      border-color: var(--mcd-red);
+      box-shadow: 0 4px 14px rgba(218,41,28,0.3);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .card-header {
+      background: linear-gradient(90deg, var(--mcd-red), #c42318);
+      color: white;
+      padding: 16px 22px;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .card-header span {
+      background: rgba(255,255,255,0.2);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .card-body {
+      padding: 22px;
+    }
+
+    .plan {
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .plan:hover {
+      border-color: var(--mcd-yellow);
+      box-shadow: 0 4px 12px rgba(255,199,44,0.15);
+    }
+
+    .plan.recommended {
+      border: 2px solid var(--mcd-yellow);
+      background: linear-gradient(to right, #fffdf5, #fff);
+    }
+
+    .plan.recommended::before {
+      content: "推荐";
+      position: absolute;
+      top: -1px;
+      right: 16px;
+      background: var(--mcd-yellow);
+      color: var(--mcd-dark);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .plan-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--mcd-red);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .plan-title .tag {
+      font-size: 12px;
+      background: #f5f5f5;
+      color: #555;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .plan-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .plan-meta strong {
+      color: var(--mcd-red);
+    }
+
+    .reason {
+      font-size: 13.5px;
+      color: var(--muted);
+      background: #fafafa;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border-left: 3px solid var(--mcd-yellow);
+    }
+
+    .decision-card {
+      background: linear-gradient(135deg, #fff9e6, #fff3cc);
+      border: 2px dashed var(--mcd-yellow);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-top: 18px;
+    }
+
+    .decision-card h3 {
+      font-size: 15px;
+      color: var(--mcd-dark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .decision-card p {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .decision-card strong {
+      color: var(--mcd-red);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px 20px 50px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer a {
+      color: var(--mcd-red);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--mcd-yellow);
+      color: var(--mcd-dark);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 600px) {
+      .header h1 { font-size: 22px; }
+      .header p { font-size: 14px; }
+      .tab { padding: 8px 14px; font-size: 13px; }
+      .card-body { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">MCD MEAL DECISION OFFICER</div>
+    <h1>麦麦饭点决策官 <span class="badge">Demo</span></h1>
+    <p>同一顿饭，换个<span class="highlight">时段</span>，就是完全不同的决策。<br>基于麦当劳官方 MCP · 真实数据 · 可解释三方案</p>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" data-scene="lunch">工作午餐</button>
+      <button class="tab" data-scene="night">加班宵夜</button>
+      <button class="tab" data-scene="group">3人聚餐</button>
+      <button class="tab" data-scene="budget">预算紧张</button>
+    </div>
+
+    <!-- 工作午餐 -->
+    <div class="scene" id="lunch">
+      <div class="card">
+        <div class="card-header">
+          【麦麦饭点决策】
+          <span>时段：工作午餐｜人数：1｜预算：≤35元</span>
+        </div>
+        <div class="card-body">
+          <div class="plan">
+            <div class="plan-title">A. 最省方案 <span class="tag">省钱优先</span></div>
+            <div class="plan-meta">
+              <div>组合：麦香鸡 + 中薯条 + 中可乐</div>
+              <div>实付 <strong>¥24.5</strong>（原价 ¥32）</div>
+              <div>热量 <strong>780 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：工作午餐优先性价比，经典组合快速解决饥饿，放弃了更高蛋白的板烧以控制预算。</div>
+          </div>
+
+          <div class="plan recommended">
+            <div class="plan-title">B. 最均衡方案 <span class="tag">推荐</span></div>
+            <div class="plan-meta">
+              <div>组合：板烧鸡腿堡套餐（可乐换无糖）</div>
+              <div>实付 <strong>¥32.0</strong></div>
+              <div>热量 <strong>690 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：兼顾饱腹与下午不困，无糖可乐降低糖分负担，适合工作日中午。</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-title">C. 最开心方案 <span class="tag">满足优先</span></div>
+            <div class="plan-meta">
+              <div>组合：麦辣鸡腿堡 + 麦乐鸡5块 + 中可乐</div>
+              <div>实付 <strong>¥34.5</strong></div>
+              <div>热量 <strong>920 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：重口解压，适合压力大的工作日中午，但热量偏高，下午可能犯困。</div>
+          </div>
+
+          <div class="decision-card">
+            <h3>📋 决策卡片（可直接转发）</h3>
+            <p><strong>时段目标：</strong>饱腹 + 下午不困</p>
+            <p><strong>最终建议：</strong>选 B，因为工作午餐更看重持续精力而非极致省钱或重口刺激</p>
+            <p><strong>取舍说明：</strong>放弃了最便宜的组合，换来更低的糖分负担和更好的下午状态</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 加班宵夜 -->
+    <div class="scene" id="night" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          【麦麦饭点决策】
+          <span>时段：加班宵夜｜人数：1｜预算：≤40元</span>
+        </div>
+        <div class="card-body">
+          <div class="plan">
+            <div class="plan-title">A. 最省方案 <span class="tag">省钱优先</span></div>
+            <div class="plan-meta">
+              <div>组合：麦香鸡 + 小份薯条</div>
+              <div>实付 <strong>¥18.5</strong></div>
+              <div>热量 <strong>520 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：宵夜时段优先低负担，放弃饮料和多余小食，快速垫一下即可。</div>
+          </div>
+
+          <div class="plan recommended">
+            <div class="plan-title">B. 最均衡方案 <span class="tag">推荐</span></div>
+            <div class="plan-meta">
+              <div>组合：板烧鸡腿堡（去酱）+ 玉米杯</div>
+              <div>实付 <strong>¥29.0</strong></div>
+              <div>热量 <strong>480 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：宵夜核心是「不撑」，去酱降低油脂，玉米提供饱腹感且易消化。</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-title">C. 最开心方案 <span class="tag">满足优先</span></div>
+            <div class="plan-meta">
+              <div>组合：麦辣鸡腿堡 + 麦旋风</div>
+              <div>实付 <strong>¥38.5</strong></div>
+              <div>热量 <strong>890 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：加班后想吃点甜的奖励自己，但热量较高，仅建议偶尔选择。</div>
+          </div>
+
+          <div class="decision-card">
+            <h3>📋 决策卡片（可直接转发）</h3>
+            <p><strong>时段目标：</strong>低负担不撑</p>
+            <p><strong>最终建议：</strong>选 B，因为宵夜更看重消化负担而非极致省钱或情绪满足</p>
+            <p><strong>取舍说明：</strong>放弃了最便宜和最解压的组合，换来更低的夜间负担感</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3人聚餐 -->
+    <div class="scene" id="group" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          【麦麦饭点决策】
+          <span>时段：周末聚餐｜人数：3｜人均预算：≤50元</span>
+        </div>
+        <div class="card-body">
+          <div class="plan">
+            <div class="plan-title">A. 最省方案 <span class="tag">省钱优先</span></div>
+            <div class="plan-meta">
+              <div>组合：3份麦香鸡套餐 + 共享薯条</div>
+              <div>合计 <strong>¥89</strong>（人均 ≈¥29.7）</div>
+              <div>总热量约 <strong>2100 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：极致控制预算，但口味单一，且未照顾控卡和不吃辣的朋友。</div>
+          </div>
+
+          <div class="plan recommended">
+            <div class="plan-title">B. 最均衡方案 <span class="tag">推荐</span></div>
+            <div class="plan-meta">
+              <div>组合：板烧鸡腿堡套餐×1 + 麦辣鸡腿堡套餐×1 + 麦香鱼套餐×1（无糖可乐）</div>
+              <div>合计 <strong>¥128</strong>（人均 ≈¥42.7）</div>
+              <div>总热量约 <strong>1950 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：一人一份不同主食，覆盖不吃辣与控卡需求，口味有差异但不踩雷，公平性最高。</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-title">C. 最开心方案 <span class="tag">满足优先</span></div>
+            <div class="plan-meta">
+              <div>组合：新品鸡腿堡×2 + 麦辣鸡翅 + 麦旋风×2 + 共享小食</div>
+              <div>合计 <strong>¥148</strong>（人均 ≈¥49.3）</div>
+              <div>总热量约 <strong>2400 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：氛围感拉满，适合庆祝或放松聚餐，但预算接近上限且热量偏高。</div>
+          </div>
+
+          <div class="decision-card">
+            <h3>📋 决策卡片（可直接转发）</h3>
+            <p><strong>时段目标：</strong>公平 + 不踩雷 + 人均可控</p>
+            <p><strong>最终建议：</strong>选 B，因为聚餐最重要的是每个人都能接受，而不是某一个人最开心</p>
+            <p><strong>取舍说明：</strong>放弃了最便宜和最热闹的组合，换来更高的公平性和更低的踩雷风险</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 预算紧张 -->
+    <div class="scene" id="budget" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          【麦麦饭点决策】
+          <span>时段：下午茶｜人数：1｜预算：≤25元</span>
+        </div>
+        <div class="card-body">
+          <div class="plan recommended">
+            <div class="plan-title">A. 最省方案 <span class="tag">推荐</span></div>
+            <div class="plan-meta">
+              <div>组合：麦香鸡 + 小份薯条</div>
+              <div>实付 <strong>¥18.5</strong></div>
+              <div>热量 <strong>520 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：预算极紧时优先解决饥饿感，经典组合性价比最高，放弃饮料以留足空间。</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-title">B. 最均衡方案 <span class="tag">平衡</span></div>
+            <div class="plan-meta">
+              <div>组合：麦香鱼 + 玉米杯</div>
+              <div>实付 <strong>¥22.0</strong></div>
+              <div>热量 <strong>410 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：在预算内尽量控制热量，玉米提供额外饱腹，适合下午不想吃太撑的场景。</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-title">C. 最开心方案 <span class="tag">满足优先</span></div>
+            <div class="plan-meta">
+              <div>组合：麦辣鸡翅 4 块 + 中可乐</div>
+              <div>实付 <strong>¥24.5</strong></div>
+              <div>热量 <strong>480 kcal</strong></div>
+            </div>
+            <div class="reason">决策理由：重口解馋，预算几乎用满，适合特别想吃辣的时候。</div>
+          </div>
+
+          <div class="decision-card">
+            <h3>📋 决策卡片（可直接转发）</h3>
+            <p><strong>时段目标：</strong>解决饥饿 + 严格控预算</p>
+            <p><strong>最终建议：</strong>选 A，因为预算只有 25 元时，性价比是第一优先级</p>
+            <p><strong>取舍说明：</strong>放弃了更多选择空间，换来确定能吃饱且不超支</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>本页面为<strong>演示模式</strong>，数据来自真实 MCP 调用后的示例结果。</p>
+    <p>完整版请导入 <code>skill/SKILL.md</code> 到 WorkBuddy，连接你的麦当劳 MCP Token 使用。</p>
+    <p style="margin-top:12px;">
+      <a href="https://github.com/" target="_blank">GitHub 仓库</a> · 
+      2026 麦当劳程序员创意开发大赛参赛作品
+    </p>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const scenes = document.querySelectorAll('.scene');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // 切换 tab 样式
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // 切换场景
+        const target = tab.dataset.scene;
+        scenes.forEach(scene => {
+          scene.style.display = scene.id === target ? 'block' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
